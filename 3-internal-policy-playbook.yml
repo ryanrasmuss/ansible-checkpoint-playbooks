@@ -1,0 +1,158 @@
+---
+- hosts: cp-mgmt-server
+  tasks:
+  - name: "login"
+    check_point_mgmt:
+      command: login
+      parameters:
+        username: "{{mgmt_user}}"
+        password: "{{mgmt_password}}"
+        management: "{{mgmt_server}}"
+      fingerprint: "{{fingerprint}}"
+    register: login_response
+  - name: "add Management Rule"
+    check_point_mgmt:
+      command: add-access-rule
+      parameters:
+        layer: "Network"
+        position: "bottom"
+        name: "Management"
+        action: "Accept"
+        destination: "R80.10-Mgmt"
+        enabled: "true"
+        source: "Admins"
+        track:
+          type: "Log"
+      session-data: "{{login_response}}"
+  - name: "add SSH Rule"
+    check_point_mgmt:
+      command: add-access-rule
+      parameters:
+        layer: "Network"
+        position: "bottom"
+        name: "Allow SSH"
+        action: "Accept"
+        destination: "CP-Gateways"
+        enabled: "true"
+        service:
+          - "ssh"
+          - "ssh_version_2"
+        source: "Admins"
+        track:
+          type: "Log"
+      session-data: "{{login_response}}"
+  - name: "add Pings/DNS/DHCP/trace Rule"
+    check_point_mgmt:
+      command: add-access-rule
+      parameters:
+        layer: "Network"
+        position: "bottom"
+        name: "Pings,DNS,DHCP,Trace"
+        action: "Accept"
+        enabled: "true"
+        service:
+          - "dns"
+          - "dhcp"
+          - "icmp-proto"
+          - "traceroute"
+      session-data: "{{login_response}}"
+  - name: "add Stealth Rule"
+    check_point_mgmt:
+      command: add-access-rule
+      parameters:
+        layer: "Network"
+        position: "bottom"
+        name: "Stealth Rule"
+        action: "Drop"
+        destination: "R80.10-Mgmt"
+        enabled: "true"
+        track:
+          type: "Log"
+      session-data: "{{login_response}}"
+  - name: "add Stop External Rule"
+    check_point_mgmt:
+      command: add-access-rule
+      parameters:
+        layer: "Network"
+        position: "bottom"
+        name: "Stop External"
+        action: "Drop"
+        destination:
+          - "Internal"
+          - "Management"
+        enabled: "true"
+        source: "External"
+        track:
+          type: "Log"
+      session-data: "{{login_response}}"
+  - name: "add Wild Access Rule"
+    check_point_mgmt:
+      command: add-access-rule
+      parameters:
+        layer: "Network"
+        position: "bottom"
+        name: "Wild Access"
+        action: "Accept"
+        enabled: "true"
+        source:
+          - "External"
+          - "Internal"
+          - "Management"
+        track:
+          type: "Log"
+      session-data: "{{login_response}}"
+  - name: "add Cleanup Rule"
+    check_point_mgmt:
+      command: add-access-rule
+      parameters:
+        layer: "Network"
+        position: "bottom"
+        name: "Cleanup"
+        action: "Drop"
+        enabled: "true"
+      session-data: "{{login_response}}"
+  - name: "delete default Rule"
+    check_point_mgmt:
+      command: delete-access-rule
+      parameters:
+        layer: "Network"
+        rule-number: "1"
+      session-data: "{{login_response}}"
+  - name: "add Management Section Title"
+    check_point_mgmt:
+      command: add-access-section
+      parameters:
+        layer: "Network"
+        position: "top"
+        name: "Management Rules"
+      session-data: "{{login_response}}"
+  - name: "add Network Section Title"
+    check_point_mgmt:
+      command: add-access-section
+      parameters:
+        layer: "Network"
+        position: "5"
+        name: "Subnet Rules"
+      session-data: "{{login_response}}"
+  - name: "add Cleanup Section Title"
+    check_point_mgmt:
+      command: add-access-section
+      parameters:
+        layer: "Network"
+        position: "7"
+        name: "Explicit Cleanup"
+      session-data: "{{login_response}}"
+  - name: "publish this session"
+    check_point_mgmt:
+      command: publish
+      session-data: "{{login_response}}"
+  - name: "install policy"
+    check_point_mgmt:
+      command: install-policy
+      parameters:
+        policy-package: "standard"
+      session-data: "{{login_response}}"
+  - name: "logout"
+    check_point_mgmt:
+      command: logout
+      session-data: "{{login_response}}"

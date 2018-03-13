@@ -1,0 +1,7 @@
+---
+- name: Entire Internal
+  hosts: cp-mgmt-server
+- import_playbook: gateway1-playbook.yml  
+- import_playbook: internal-objects-playbook.yml
+- import_playbook: internal-policy-playbook.yml
+

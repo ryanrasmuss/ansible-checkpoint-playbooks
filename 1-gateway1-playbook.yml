@@ -1,0 +1,33 @@
+---
+- hosts: cp-mgmt-server
+  tasks:
+  - name: "login"
+    check_point_mgmt:
+      command: login
+      parameters:
+        username: "{{mgmt_user}}"
+        password: "{{mgmt_password}}"
+        management: "{{mgmt_server}}"
+      fingerprint: "{{fingerprint}}"
+    register: login_response
+  - name: "add gateway w/ sic"
+    check_point_mgmt:
+      command: add-simple-gateway
+      parameters:
+        name: "{{gateway1}}"
+        ipv4-address: "{{gateway1_address}}"
+        firewall: "true"
+        one-time-password: "{{sic}}"
+        color: "firebrick"
+        url-filtering: "true"
+        application-control: "true"
+        version: "R80.10"
+      session-data: "{{login_response}}"
+  - name: "publish this session"
+    check_point_mgmt:
+      command: publish
+      session-data: "{{login_response}}"
+  - name: "logout"
+    check_point_mgmt:
+      command: logout
+      session-data: "{{login_response}}"

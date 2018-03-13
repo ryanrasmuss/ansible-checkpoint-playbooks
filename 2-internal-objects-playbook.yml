@@ -1,0 +1,125 @@
+---
+- hosts: cp-mgmt-server
+  tasks:
+  - name: "login"
+    check_point_mgmt:
+      command: login
+      parameters:
+        username: "{{mgmt_user}}"
+        password: "{{mgmt_password}}"
+        management: "{{mgmt_server}}"
+      fingerprint: "{{fingerprint}}"
+    register: login_response
+  - name: "add Management Network Object"
+    check_point_mgmt:
+      command: add-network
+      parameters:
+        name: "Management"
+        subnet: "192.168.76.0"
+        mask-length: "24"
+        color: "green"
+        nat-settings:
+          auto-rule: "true"
+          method: "hide"
+          hide-behind: "gateway"
+          method: "hide"
+      session-data: "{{login_response}}"
+  - name: "add Ansible Server Host Object"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "Ansible-Server"
+        ip-address: "192.168.76.215"
+        color: "green"
+      session-data: "{{login_response}}"
+  - name: "add Internal Network Object"
+    check_point_mgmt:
+      command: add-network
+      parameters:
+        name: "Internal"
+        subnet: "192.168.78.0"
+        mask-length: "24"
+        color: "blue"
+        nat-settings:
+          auto-rule: "true"
+          method: "hide"
+          hide-behind: "gateway"
+          method: "hide"
+      session-data: "{{login_response}}"
+  - name: "add Windows Host Object"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "Windows-Host1"
+        ip-address: "192.168.78.20"
+        color: "blue"
+      session-data: "{{login_response}}"
+  - name: "add External Network Object"
+    check_point_mgmt:
+      command: add-network
+      parameters:
+        name: "External"
+        subnet: "192.168.26.0"
+        mask-length: "24"
+        color: "red"
+      session-data: "{{login_response}}"
+  - name: "add External Router Object"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "External-Router"
+        ip-address: "192.168.76.2"
+        color: "red"
+      session-data: "{{login_response}}"
+  - name: "add Admin Host 1"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "Admin-1"
+        ip-address: "192.168.78.1"
+        color: "blue"
+      session-data: "{{login_response}}"
+  - name: "add Admin Host 2"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "Admin-2"
+        ip-address: "192.168.76.1"
+        color: "green"
+      session-data: "{{login_response}}"
+  - name: "add Admin Host 3"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "Admin-3"
+        ip-address: "192.168.26.1"
+        color: "red"
+      session-data: "{{login_response}}"
+  - name: "add Admin Group Object"
+    check_point_mgmt:
+      command: add-group
+      parameters:
+        name: "Admins"
+        members:
+          - "Admin-1"
+          - "Admin-2"
+          - "Admin-3"
+          - "R80.10-Mgmt"
+        color: "gold"
+      session-data: "{{login_response}}"
+  - name: "add Gateways Group Object"
+    check_point_mgmt:
+      command: add-group
+      parameters:
+        name: "CP-Gateways"
+        members: "R80.10-GW-1"
+        color: "gold"
+      session-data: "{{login_response}}"
+  - name: "publish"
+    check_point_mgmt:
+      command: publish
+      session-data: "{{login_response}}"
+  - name: "logout"
+    check_point_mgmt:
+      command: logout
+      session-data: "{{login_response}}"
