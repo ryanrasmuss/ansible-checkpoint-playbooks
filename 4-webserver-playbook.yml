@@ -10,6 +10,7 @@
         management: "{{mgmt_server}}"
       fingerprint: "{{fingerprint}}"
     register: login_response
+    tags: login
   - name: "add gateway w/ sic"
     check_point_mgmt:
       command: add-simple-gateway
@@ -107,3 +108,4 @@
     check_point_mgmt:
       command: logout
       session-data: "{{login_response}}"
+    tags: logout

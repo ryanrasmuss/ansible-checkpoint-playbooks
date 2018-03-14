@@ -10,6 +10,7 @@
         management: "{{mgmt_server}}"
       fingerprint: "{{fingerprint}}"
     register: login_response
+    tags: login
   - name: "add Management Network Object"
     check_point_mgmt:
       command: add-network
@@ -105,6 +106,7 @@
           - "Admin-2"
           - "Admin-3"
           - "R80.10-Mgmt"
+          - "Ansible-Server"
         color: "gold"
       session-data: "{{login_response}}"
   - name: "add Gateways Group Object"
@@ -123,3 +125,4 @@
     check_point_mgmt:
       command: logout
       session-data: "{{login_response}}"
+    tags: logout

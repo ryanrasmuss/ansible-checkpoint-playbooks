@@ -1,0 +1,67 @@
+---
+- hosts: cp-mgmt-server
+  tasks:
+  - name: "login"
+    check_point_mgmt:
+      command: login
+      parameters:
+        username: "{{mgmt_user}}"
+        password: "{{mgmt_password}}"
+        management: "{{mgmt_server}}"
+      fingerprint: "{{fingerprint}}"
+    register: login_response
+  - name: "upload turn off route on gateway"
+    check_point_mgmt:
+      command: put-file
+      parameters:
+        file-name: "routeoff.clish"
+        file-content: "set static-route default nexthop gateway address 192.168.26.2 off"
+        file-path: "/home/admin/"
+        targets: "R80.10-GW-1"
+      session-data: "{{login_response}}"
+  - name: "upload new route on gateway"
+    check_point_mgmt:
+      command: put-file
+      parameters:
+        file-name: "routeon.clish"
+        file-content: "set static-route default nexthop gateway address 192.168.76.160 on"
+        file-path: "/home/admin/"
+        targets: "R80.10-GW-1"
+      session-data: "{{login_response}}"
+  - name: "upload save setup on gateway"
+    check_point_mgmt:
+      command: put-file
+      parameters:
+        file-name: "saveit.clish"
+        file-content: "save config"
+        file-path: "/home/admin/"
+        targets: "R80.10-GW-1"
+      session-data: "{{login_response}}"
+  - name: "turn off default route on gateway"
+    check_point_mgmt:
+      command: run-script
+      parameters:
+        script-name: "runme.clish"
+        script: "/bin/clish -f /home/admin/routeoff.clish"
+        targets: "R80.10-GW-1"
+      session-data: "{{login_response}}"
+  - name: "turn on new default route on gateway"
+    check_point_mgmt:
+      command: run-script
+      parameters:
+        script-name: "runme.clish"
+        script: "/bin/clish -f /home/admin/routeon.clish"
+        targets: "R80.10-GW-1"
+      session-data: "{{login_response}}"
+  - name: "save config on gateway"
+    check_point_mgmt:
+      command: run-script
+      parameters:
+        script-name: "runme.clish"
+        script: "clish -f /home/admin/saveit.clish"
+        targets: "R80.10-GW-1"
+      session-data: "{{login_response}}"
+  - name: "logout"
+    check_point_mgmt:
+      command: logout
+      session-data: "{{login_response}}"
