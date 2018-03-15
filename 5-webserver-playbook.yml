@@ -104,6 +104,7 @@
         targets: "R80.10-GW-2"
         threat-prevention: "false"
       session-data: "{{login_response}}"
+    tags: install
   - name: "logout"
     check_point_mgmt:
       command: logout

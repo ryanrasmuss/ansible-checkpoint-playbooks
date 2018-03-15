@@ -1,0 +1,7 @@
+- name: Entire Network Configuration
+  hosts: cp-mgmt-server
+- import_playbook: 1-gateway1-playbook.yml
+- import_playbook: 2-internal-objects-playbook.yml
+- import_playbook: 3-internal-policy-playbook.yml
+- import_playbook: 4-setup-routes-playbook.yml
+- import_playbook: 5-webserver-playbook.yml

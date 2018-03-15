@@ -6,6 +6,7 @@ by **Ryan Rasmuss**
 
 ### Todo
 
+- Go over topology, define management, internal, web, external (make sure gw2 makes sense)
 - Import presentation?
 - -fs on last command, may not need saveit.clish
 - Add vm setup, interfaces etc, ssh keys requirements etc

@@ -153,6 +153,7 @@
       parameters:
         policy-package: "standard"
       session-data: "{{login_response}}"
+    tags: install
   - name: "logout"
     check_point_mgmt:
       command: logout
