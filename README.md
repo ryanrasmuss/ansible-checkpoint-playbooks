@@ -8,3 +8,4 @@ by **Ryan Rasmuss**
 
 - Import presentation?
 - -fs on last command, may not need saveit.clish
+- Add vm setup, interfaces etc, ssh keys requirements etc
