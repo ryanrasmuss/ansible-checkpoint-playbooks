@@ -101,10 +101,21 @@
       command: install-policy
       parameters:
         policy-package: "standard"
-        targets: "R80.10-GW-2"
+        targets: 
+          - "R80.10-GW-1"
+          - "R80.10-GW-2"
         threat-prevention: "false"
       session-data: "{{login_response}}"
     tags: install
+  - name: "install threat prevention policy"
+    check_point_mgmt:
+      command: install-policy
+      parameters:
+        policy-package: "standard"
+        access: "false"
+        targets: "R80.10-GW-2"
+        threat-prevention: "true"
+      session-data: "{{login_response}}"
   - name: "logout"
     check_point_mgmt:
       command: logout
