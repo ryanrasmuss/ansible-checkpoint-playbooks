@@ -26,6 +26,17 @@
         anti-virus: "true"
         anti-bot: "true"
         ips: "true"
+        interfaces:
+          - name: "eth1"
+            ipv4-address: "192.168.74.160"
+            ipv4-network-mask: "255.255.255.0"
+            anti-spoofing: "true"
+            topology: "internal"
+          - name: "eth2"
+            ipv4-address: "192.168.26.160"
+            ipv4-network-mask: "255.255.255.0"
+            anti-spoofing: "true"
+            topology: "external"
       session-data: "{{login_response}}"
   - name: "add Web Network Object"
     check_point_mgmt:

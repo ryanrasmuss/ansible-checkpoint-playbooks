@@ -1,0 +1,28 @@
+---
+- hosts: cp-mgmt-server
+  tasks:
+  - name: "login"
+    check_point_mgmt:
+      command: login
+      parameters:
+        username: "{{mgmt_user}}"
+        password: "{{mgmt_password}}"
+        management: "{{mgmt_server}}"
+      fingerprint: "{{fingerprint}}"
+    register: login_response
+  - name: "add test host"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "test-123abc"
+        ip-address: "1.1.1.2"
+        color: "red"
+      session-data: "{{login_response}}"
+  - name: "discard"
+    check_point_mgmt:
+      command: discard
+      session-data: "{{login_response}}"
+  - name: "logout"
+    check_point_mgmt:
+      command: logout
+      session-data: "{{login_response}}"
