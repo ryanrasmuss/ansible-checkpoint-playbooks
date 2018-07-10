@@ -22,7 +22,6 @@ Use ``get_fingerprint.sh`` on your management server to easily copy the fingerpr
 
 [Check Point Management API Reference](https://sc1.checkpoint.com/documents/latest/APIs/index.html#introduction~v1.2%20)
 
-Install and setup guide for Check Point & Ansible [here]
-(https://docs.google.com/document/d/1HfuLJl6J13w55gdvC2j7mlZMWadZ8ybHcRUg_qSwFsc/edit?usp=sharing)
+Install and setup guide for Check Point & Ansible [here](https://docs.google.com/document/d/1HfuLJl6J13w55gdvC2j7mlZMWadZ8ybHcRUg_qSwFsc/edit?usp=sharing)
 
 
