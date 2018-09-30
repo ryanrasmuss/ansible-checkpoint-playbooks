@@ -45,7 +45,6 @@
           auto-rule: "true"
           method: "hide"
           hide-behind: "gateway"
-          method: "hide"
       session-data: "{{login_response}}"
   - name: "add Windows Host Object"
     check_point_mgmt:
