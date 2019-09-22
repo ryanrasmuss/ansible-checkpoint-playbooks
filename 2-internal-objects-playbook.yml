@@ -1,5 +1,5 @@
 ---
-- hosts: cp-mgmt-server
+- hosts: checkpoint
   tasks:
   - name: "login"
     check_point_mgmt:
@@ -104,7 +104,6 @@
           - "Admin-1"
           - "Admin-2"
           - "Admin-3"
-          - "R80.10-Mgmt"
           - "Ansible-Server"
         color: "gold"
       session-data: "{{login_response}}"
@@ -113,8 +112,47 @@
       command: add-group
       parameters:
         name: "CP-Gateways"
-        members: "R80.10-GW-1"
+        members: "Example-Gateway"
         color: "gold"
+      session-data: "{{login_response}}"
+  - name: "add host objects"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "Suspicious-Host-1"
+        ip-address: "1.1.1.1"
+      session-data: "{{login_response}}"
+  - name: "add host objects"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "Suspicious-Host-2"
+        ip-address: "1.1.1.2"
+      session-data: "{{login_response}}"
+  - name: "add host objects"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "Suspicious-Host-3"
+        ip-address: "1.1.1.3"
+      session-data: "{{login_response}}"
+  - name: "add host objects"
+    check_point_mgmt:
+      command: add-host
+      parameters:
+        name: "Suspicious-Host-4"
+        ip-address: "1.1.1.4"
+      session-data: "{{login_response}}"
+  - name: "add group object"
+    check_point_mgmt:
+      command: add-group
+      parameters:
+        name: "Suspicious-Hosts"
+        members:
+          - "Suspicious-Host-1"
+          - "Suspicious-Host-2"
+          - "Suspicious-Host-3"
+          - "Suspicious-Host-4"
       session-data: "{{login_response}}"
   - name: "publish"
     check_point_mgmt:

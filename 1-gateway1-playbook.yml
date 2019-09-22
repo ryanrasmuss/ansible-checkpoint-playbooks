@@ -1,5 +1,5 @@
 ---
-- hosts: cp-mgmt-server
+- hosts: checkpoint
   tasks:
   - name: "login"
     check_point_mgmt:
@@ -11,17 +11,14 @@
       fingerprint: "{{fingerprint}}"
     register: login_response
     tags: login
-  - name: "add gateway w/ sic"
+  - name: "add gateway w/o sic"
     check_point_mgmt:
       command: add-simple-gateway
       parameters:
-        name: "{{gateway1}}"
-        ipv4-address: "{{gateway1_address}}"
+        name: "Example-Gateway"
+        ipv4-address: "10.10.10.254"
         firewall: "true"
-        one-time-password: "{{sic}}"
         color: "firebrick"
-        url-filtering: "true"
-        application-control: "true"
         version: "R80.10"
       session-data: "{{login_response}}"
   - name: "publish this session"

@@ -1,5 +1,5 @@
 ---
-- hosts: cp-mgmt-server
+- hosts: checkpoint
   tasks:
   - name: "login"
     check_point_mgmt:
@@ -19,7 +19,7 @@
         position: "bottom"
         name: "Management"
         action: "Accept"
-        destination: "R80.10-Mgmt"
+        destination: "Example-Gateway"
         enabled: "true"
         source: "Admins"
         track:
@@ -65,7 +65,7 @@
         position: "bottom"
         name: "Stealth Rule"
         action: "Drop"
-        destination: "R80.10-Mgmt"
+        destination: "CP-Gateways"
         enabled: "true"
         track:
           type: "Log"
@@ -143,17 +143,41 @@
         position: "7"
         name: "Explicit Cleanup"
       session-data: "{{login_response}}"
+  - name: "add blacklist outgoing"
+    check_point_mgmt:
+      command: add-access-rule
+      parameters:
+        layer: "Network"
+        position: "top"
+        name: "Blacklist Egress"
+        action: "Drop"
+        destination: "Suspicious-Hosts"
+        track:
+          type: "Log"
+      session-data: "{{login_response}}"
+  - name: "add blacklist incoming"
+    check_point_mgmt:
+      command: add-access-rule
+      parameters:
+        layer: "Network"
+        position: "top"
+        name: "Blacklist Ingress"
+        action: "Drop"
+        source: "Suspicious-Hosts"
+        track:
+          type: "Log"
+      session-data: "{{login_response}}"
   - name: "publish this session"
     check_point_mgmt:
       command: publish
       session-data: "{{login_response}}"
-  - name: "install policy"
-    check_point_mgmt:
-      command: install-policy
-      parameters:
-        policy-package: "standard"
-      session-data: "{{login_response}}"
-    tags: install
+      # - name: "install policy"
+      # check_point_mgmt:
+      #   command: install-policy
+      #parameters:
+      #     policy-package: "standard"
+      #session-data: "{{login_response}}"
+      #tags: install
   - name: "logout"
     check_point_mgmt:
       command: logout
