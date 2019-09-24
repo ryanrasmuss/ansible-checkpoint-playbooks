@@ -3,7 +3,7 @@
 # Make sure root
 
 if [ $(id -u) != 0 ]; then
-  printf "\e[1;41mHi! Please run a root!\e[0m\n"
+  printf "\e[1;41mHi! Please run as root!\e[0m\n"
   exit 1
 fi
 
